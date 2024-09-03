@@ -64,6 +64,11 @@ float angulo = 0.0;
 double nFrames = 0;
 double TempoTotal = 0;
 
+double t=0.0;
+double DeltaT = 1.0/30;
+
+int caminhoCurva = 0;
+
 // **********************************************************************
 //
 // **********************************************************************
@@ -182,12 +187,35 @@ void CarregaModelos()
 //  Este metodo deve ser alterado para ler as curvas de um arquivo texto
 // **********************************************************************
 void CriaCurvas()
-{
-    Curvas[0] = Bezier(Ponto(-5, -5), Ponto(0, 6), Ponto(5, -5));
-    Curvas[1] = Bezier(Ponto(5, -5), Ponto(15, 0), Ponto(12, 12));
-    Curvas[2] = Bezier(Ponto(-10, -5), Ponto(-15, 15), Ponto(12, 12));
+{   
+    Ponto topoEsquerda = Ponto(-2,3);
+    topoEsquerda.multiplica(3,3,0);
+    Ponto topoDireita = Ponto(2,3);
+    topoDireita.multiplica(3,3,0);
+    Ponto meioEsquerda = Ponto(-4,0);
+    meioEsquerda.multiplica(3,3,0);
+    Ponto meioDireita = Ponto(4,0);
+    meioDireita.multiplica(3,3,0);
+    Ponto baixoEsquerda = Ponto(-2,-3);
+    baixoEsquerda.multiplica(3,3,0);
+    Ponto baixoDireita = Ponto(2,-3);
+    baixoDireita.multiplica(3,3,0);
+    Ponto meio = Ponto(0,0);
+    Curvas[0] = Bezier(topoEsquerda,meio,topoDireita);
+    Curvas[1] = Bezier(topoDireita, meio, meioDireita);
+    Curvas[2] = Bezier(meioDireita, meio, baixoDireita);
+    Curvas[3] = Bezier(baixoDireita, meio, baixoEsquerda);
+    Curvas[4] = Bezier(baixoEsquerda, meio,meioEsquerda);
+    Curvas[5] = Bezier(meioEsquerda, meio, topoEsquerda);
+    Curvas[6] = Bezier(topoEsquerda, topoDireita, meio);
+    Curvas[7] = Bezier(topoDireita, meioDireita, meio);
+    Curvas[8] = Bezier(meioDireita, baixoDireita, meio);
+    Curvas[9] = Bezier(baixoDireita, baixoEsquerda, meio);
+    Curvas[10] = Bezier(baixoEsquerda, meioEsquerda, meio);
+    Curvas[11] = Bezier(meioEsquerda, topoEsquerda, meio);
+    Curvas[12] = Bezier(meioEsquerda, meio, meioDireita);
 
-    nCurvas = 3;
+    nCurvas = 13;
 }
 // **********************************************************************
 //
@@ -248,12 +276,43 @@ void DesenhaCurvas()
     for (int i = 0; i < nCurvas; i++)
     {
         defineCor(OrangeRed);
-        glLineWidth(4);
+        if(i >= nCurvas/2){
+            defineCor(YellowGreen);
+        }
+        glLineWidth(2);
         Curvas[i].Traca();
         defineCor(VioletRed);
         glLineWidth(2);
         DesenhaPoligonoDeControle(i);
     }
+}
+
+void anda(){
+
+    AssociaPersonagemComCurva(1,caminhoCurva);
+
+    Ponto P;
+    Ponto R;
+    //cout << "DeltaT: " << DeltaT << endl;
+    
+    P = Personagens[1].Curva.Calcula(t);
+    R = Personagens[1].Curva.Calcula(t+DeltaT);
+        //P.imprime("P: ");
+
+        Personagens[1].Posicao.x = P.x;
+        Personagens[1].Posicao.y = P.y;
+
+        Personagens[1].Rotacao += atan2((R.y-P.y),(R.x-P.x));
+    if(t <= 1.0){
+        t += DeltaT;
+    }else{
+        caminhoCurva++;
+        if(caminhoCurva > 5){
+            caminhoCurva = 0;
+        }
+        t = 0.0;
+    }
+    
 }
 // **********************************************************************
 //  void display( void )
@@ -281,9 +340,11 @@ void display(void)
     
     // Desenha os personagens no tempo T2.getDeltaT()
     DesenhaPersonagens(T2.getDeltaT());
-
+    anda();
     glutSwapBuffers();
 }
+
+
 // **********************************************************************
 // ContaTempo(double tempo)
 //      conta um certo n�mero de segundos e informa quanto frames
@@ -338,15 +399,17 @@ void arrow_keys(int a_keys, int x, int y)
         Personagens[1].Posicao.x -= 0.5;
         break;
     case GLUT_KEY_RIGHT:
-        Personagens[1].Rotacao++;
+        Personagens[1].Posicao.x += 0.5;
         break;
     case GLUT_KEY_UP:     // Se pressionar UP
-        glutFullScreen(); // Vai para Full Screen
+        Personagens[1].Rotacao++;
+        //glutFullScreen(); // Vai para Full Screen
         break;
     case GLUT_KEY_DOWN: // Se pressionar UP
+        Personagens[1].Rotacao--;
                         // Reposiciona a janela
-        glutPositionWindow(50, 50);
-        glutReshapeWindow(700, 500);
+        //glutPositionWindow(50, 50);
+        //glutReshapeWindow(700, 500);
         break;
     default:
         break;
