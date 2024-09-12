@@ -133,9 +133,9 @@ void DesenhaEixos()
 
 void DesenhaPersonagem()
 {
-    defineCor(YellowGreen);
+    defineCor(Copper);
     glTranslatef(53,33,0);
-    Mapa.desenhaPoligono();
+    Mastro.desenhaPoligono();
 }
 // **********************************************************************
 // void DesenhaTriangulo()
@@ -230,7 +230,7 @@ void AssociaPersonagemComCurva(int p, int c)
 void init()
 {
     // Define a cor do fundo da tela (AZUL)
-    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+    glClearColor(0.1f, 0.3f, 0.2f, 0.3f);
 
     // carrega os modelos armazenados em arquivos
     CarregaModelos();
@@ -297,12 +297,17 @@ void anda(){
     
     P = Personagens[1].Curva.Calcula(t);
     R = Personagens[1].Curva.Calcula(t+DeltaT);
-        //P.imprime("P: ");
+    //P.imprime("P: ");
 
-        Personagens[1].Posicao.x = P.x;
-        Personagens[1].Posicao.y = P.y;
+    Personagens[1].Posicao.x = P.x;
+    Personagens[1].Posicao.y = P.y;
+    //R = R - P;
+    //R.versor();
 
-        Personagens[1].Rotacao += atan2((R.y-P.y),(R.x-P.x));
+    Personagens[1].Rotacao = 180/M_PI * atan2(R.y-P.y,R.x-P.x)-90;
+    //printf("%f\n",45*atan2((abs(R.y-P.y)),(abs(R.x-P.x))));
+    //Personagens[1].Rotacao = 45*atan2(R.y , R.x);
+        
     if(t <= 1.0){
         t += DeltaT;
     }else{
