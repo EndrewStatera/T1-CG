@@ -51,6 +51,7 @@ InstanciaBZ Personagens[10];
 Bezier Curvas[20];
 unsigned int nCurvas;
 
+
 // Limites l�gicos da �rea de desenho
 Ponto Min, Max;
 
@@ -65,7 +66,7 @@ double nFrames = 0;
 double TempoTotal = 0;
 
 double t=0.0;
-double DeltaT = 1.0/30;
+double DeltaT = 1.0/40;
 
 int caminhoCurva = 0;
 
@@ -107,7 +108,7 @@ void reshape(int w, int h)
     // Define a area a ser ocupada pela area OpenGL dentro da Janela
     glViewport(0, 0, w, h);
     // Define os limites logicos da area OpenGL dentro da Janela
-    glOrtho(Min.x, Max.x, Min.y, Max.y, -10, +10);
+    glOrtho(Min.x+10, Max.x-10, Min.y+10, Max.y-10, -10, +10);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -143,9 +144,9 @@ void DesenhaPersonagem()
 void DesenhaTriangulo()
 {
     glBegin(GL_TRIANGLES);
-        glVertex2f(-2,-2);
-        glVertex2f(0, 2);
-        glVertex2f(2,-2);
+        glVertex2f(-0.3,-0.3);
+        glVertex2f(0, 0.3);
+        glVertex2f(0.3,-0.3);
     glEnd();
 }
 // **********************************************************************
@@ -158,7 +159,7 @@ void CriaInstancias()
     Personagens[0].modelo = DesenhaPersonagem;
     Personagens[0].Escala = Ponto(1, 1, 1);
 
-    Personagens[1].Posicao = Ponto(5, 0);
+    Personagens[1].Posicao = Ponto(0, 0);
     Personagens[1].Rotacao = 0;
     Personagens[1].modelo = DesenhaTriangulo;
     Personagens[1].Escala = Ponto(1, 1, 1);
@@ -189,17 +190,17 @@ void CarregaModelos()
 void CriaCurvas()
 {   
     Ponto topoEsquerda = Ponto(-2,3);
-    topoEsquerda.multiplica(3,3,0);
+    // topoEsquerda.multiplica(3,3,0);
     Ponto topoDireita = Ponto(2,3);
-    topoDireita.multiplica(3,3,0);
+    // topoDireita.multiplica(3,3,0);
     Ponto meioEsquerda = Ponto(-4,0);
-    meioEsquerda.multiplica(3,3,0);
+    // meioEsquerda.multiplica(3,3,0);
     Ponto meioDireita = Ponto(4,0);
-    meioDireita.multiplica(3,3,0);
+    // meioDireita.multiplica(3,3,0);
     Ponto baixoEsquerda = Ponto(-2,-3);
-    baixoEsquerda.multiplica(3,3,0);
+    // baixoEsquerda.multiplica(3,3,0);
     Ponto baixoDireita = Ponto(2,-3);
-    baixoDireita.multiplica(3,3,0);
+    // baixoDireita.multiplica(3,3,0);
     Ponto meio = Ponto(0,0);
     Curvas[0] = Bezier(topoEsquerda,meio,topoDireita);
     Curvas[1] = Bezier(topoDireita, meio, meioDireita);
@@ -214,7 +215,7 @@ void CriaCurvas()
     Curvas[10] = Bezier(baixoEsquerda, meioEsquerda, meio);
     Curvas[11] = Bezier(meioEsquerda, topoEsquerda, meio);
     Curvas[12] = Bezier(meioEsquerda, meio, meioDireita);
-
+    
     nCurvas = 13;
 }
 // **********************************************************************
@@ -229,8 +230,8 @@ void AssociaPersonagemComCurva(int p, int c)
 // **********************************************************************
 void init()
 {
-    // Define a cor do fundo da tela (AZUL)
-    glClearColor(0.1f, 0.3f, 0.2f, 0.3f);
+    // Define a cor do fundo da tela
+    glClearColor(0.0f, 0.2f, 0.1f, 0.2f);
 
     // carrega os modelos armazenados em arquivos
     CarregaModelos();
@@ -281,30 +282,32 @@ void DesenhaCurvas()
         }
         glLineWidth(2);
         Curvas[i].Traca();
-        defineCor(VioletRed);
-        glLineWidth(2);
-        DesenhaPoligonoDeControle(i);
+
+        //defineCor(VioletRed);
+        //glLineWidth(2);
+        //DesenhaPoligonoDeControle(i);
     }
 }
 
-void anda(){
+void anda(int p){
 
     AssociaPersonagemComCurva(1,caminhoCurva);
 
-    Ponto P;
-    Ponto R;
+    Ponto I;
+    Ponto J;
     //cout << "DeltaT: " << DeltaT << endl;
     
-    P = Personagens[1].Curva.Calcula(t);
-    R = Personagens[1].Curva.Calcula(t+DeltaT);
+    I = Personagens[1].Curva.Calcula(t);
+    J = Personagens[1].Curva.Calcula(t+DeltaT*2);
     //P.imprime("P: ");
 
-    Personagens[1].Posicao.x = P.x;
-    Personagens[1].Posicao.y = P.y;
+    Personagens[1].Posicao.x = I.x;
+    Personagens[1].Posicao.y = I.y;
+
     //R = R - P;
     //R.versor();
 
-    Personagens[1].Rotacao = 180/M_PI * atan2(R.y-P.y,R.x-P.x)-90;
+    Personagens[1].Rotacao = 180/M_PI * atan2(J.y-I.y,J.x-I.x) - 90;
     //printf("%f\n",45*atan2((abs(R.y-P.y)),(abs(R.x-P.x))));
     //Personagens[1].Rotacao = 45*atan2(R.y , R.x);
         
@@ -345,7 +348,7 @@ void display(void)
     
     // Desenha os personagens no tempo T2.getDeltaT()
     DesenhaPersonagens(T2.getDeltaT());
-    anda();
+    anda(1);
     glutSwapBuffers();
 }
 
@@ -434,7 +437,7 @@ int main(int argc, char **argv)
     glutInitWindowPosition(0, 0);
 
     // Define o tamanho inicial da janela grafica do programa
-    glutInitWindowSize(650, 500);
+    glutInitWindowSize(650, 650);
 
     // Cria a janela na tela, definindo o nome da
     // que aparecera na barra de t�tulo da janela.
