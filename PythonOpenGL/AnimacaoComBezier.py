@@ -64,11 +64,16 @@ def DesenhaPersonagem():
     SetColor(YellowGreen)
     glTranslatef(53,33,0)
     Mapa.desenhaPoligono()
-    SetColor(DarkPurple)
-    glTranslatef(33, 53, 0)
+    SetColor(Red)
+    glTranslatef(53, 33, 0)
     Character.desenhaPoligono()
     pass
 
+def DesenhaTriangulo():
+    SetColor(Red)
+    glTranslatef(53, 33, 0)
+    Character.desenhaPoligono()
+    pass
 
 # ***********************************************************************************
 # Esta função deve instanciar todos os personagens do cenário
@@ -81,6 +86,12 @@ def CriaInstancias():
     Personagens[0].rotacao = 0
     Personagens[0].posicao = Ponto(0,0)
     Personagens[0].escala = Ponto (1,1,1) 
+    
+    Personagens.append(InstanciaBZ())
+    Personagens[1].modelo = DesenhaTriangulo
+    Personagens[1].rotacao = 0
+    Personagens[1].posicao = Ponto(0,0)
+    Personagens[1].escala = Ponto (1,1,1)
 
 
 # ***********************************************************************************
