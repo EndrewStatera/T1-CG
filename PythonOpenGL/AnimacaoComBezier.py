@@ -52,21 +52,18 @@ def CarregaModelos():
     global MeiaSeta, Mastro
     MeiaSeta.LePontosDeArquivo("MeiaSeta.txt")
     Mastro.LePontosDeArquivo("Mastro.txt")
-    Mapa.LePontosDeArquivo("EstadoRS.txt")
+    #Mapa.LePontosDeArquivo("EstadoRS.txt")
     Character.LePontosDeArquivo("character.txt")
-    A, B = Mapa.getLimits()
+    #A, B = Mapa.getLimits()
     print("Limites do Mapa")
-    A.imprime()
-    B.imprime()
+    #A.imprime()
+    #B.imprime()
 
 # ***********************************************************************************
 def DesenhaPersonagem():
     SetColor(YellowGreen)
     glTranslatef(53,33,0)
     Mapa.desenhaPoligono()
-    SetColor(Red)
-    glTranslatef(53, 33, 0)
-    Character.desenhaPoligono()
     pass
 
 def DesenhaTriangulo():
@@ -75,6 +72,14 @@ def DesenhaTriangulo():
     Character.desenhaPoligono()
     pass
 
+def DesenhaTrianguloCerto():
+    SetColor(Green)
+    glBegin(GL_TRIANGLES)
+    glVertex2f(-2,-2)
+    glVertex2f(0, 2)
+    glVertex2f(2,-2)
+    glEnd()
+
 # ***********************************************************************************
 # Esta função deve instanciar todos os personagens do cenário
 # ***********************************************************************************
@@ -82,13 +87,13 @@ def CriaInstancias():
     global Personagens
 
     Personagens.append(InstanciaBZ())
-    Personagens[0].modelo = DesenhaPersonagem
+    Personagens[0].modelo = DesenhaTrianguloCerto
     Personagens[0].rotacao = 0
     Personagens[0].posicao = Ponto(0,0)
     Personagens[0].escala = Ponto (1,1,1) 
     
     Personagens.append(InstanciaBZ())
-    Personagens[1].modelo = DesenhaTriangulo
+    Personagens[1].modelo = DesenhaPersonagem
     Personagens[1].rotacao = 0
     Personagens[1].posicao = Ponto(0,0)
     Personagens[1].escala = Ponto (1,1,1)
@@ -317,6 +322,11 @@ def mouseMove(x: int, y: int):
     #glutPostRedisplay()
     return
 
+def moveCharacter(character, curva, move):
+     
+    
+    pass
+    
 
 # ***********************************************************************************
 # Programa Principal
@@ -325,7 +335,7 @@ def mouseMove(x: int, y: int):
 glutInit(sys.argv)
 glutInitDisplayMode(GLUT_RGBA)
 # Define o tamanho inicial da janela grafica do programa
-tamanho_janela = 600
+tamanho_janela = 800
 glutInitWindowSize(tamanho_janela, tamanho_janela)
 glutInitWindowPosition(100, 100)
 wind = glutCreateWindow("T1")
