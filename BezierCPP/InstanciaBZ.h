@@ -10,6 +10,8 @@
 #ifndef Instancia_hpp
 #define Instancia_hpp
 #include <iostream>
+#include <random>
+#include <chrono>
 using namespace std;
 
 #include "Bezier.h"
@@ -38,6 +40,7 @@ public:
 
     void desenha();
     void AtualizaPosicao(float tempoDecorrido);
+    int numeroRand(int dist);
     Ponto ObtemPosicao();
 };
 
