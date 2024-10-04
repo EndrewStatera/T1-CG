@@ -3,6 +3,8 @@ from Ponto import Ponto
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
+from ListaDeCoresRGB import *
+import random
 import copy
 
 class Bezier:
@@ -17,6 +19,9 @@ class Bezier:
         #print ("Construtora da Bezier")
         self.ComprimentoTotalDaCurva = 0.0
         self.Coords = []
+        self.adjacentes = []
+        self.color = Black
+
         #print (args)
         for i in args:
             self.Coords.append(i)
@@ -33,6 +38,8 @@ class Bezier:
         t=0.0
         DeltaT = 1.0/50
         P = Ponto
+        SetColor(self.color)
+
         glBegin(GL_LINE_STRIP)
         
         while(t<1.0):
@@ -45,12 +52,43 @@ class Bezier:
         glEnd()
 
     def TracaPoligonoDeControle(self):
+        a = 0
+        '''
+        glColor3f(255, 255, 255)
         glBegin(GL_LINE_LOOP)
         for i in range(3):
             glVertex3f(self.Coords[i].x, self.Coords[i].y, self.Coords[i].z)
         glEnd()
+        '''
 
     def getPC(self, i):
         temp = copy.deepcopy(self.Coords[i])
         return temp
-            
+
+    #Endrew's crazy stuff
+    def add_adjacente(self, curva):
+        self.adjacentes.append(curva)
+
+    def random_curve(self):
+        self.color = Black
+        curva = random.choice(self.adjacentes)
+        curva.color = YellowGreen
+        return curva
+
+    def change_curve_color(self):
+        t = 0.0
+        DeltaT = 1.0 / 50
+        P = Ponto
+        SetColor(YellowGreen)
+
+        glBegin(GL_LINE_STRIP)
+
+        while (t < 1.0):
+            P = self.Calcula(t)
+            glVertex2f(P.x, P.y)
+            t += DeltaT
+        P = self.Calcula(1.0)  # faz o acabamento da curva
+        glVertex2f(P.x, P.y)
+
+        glEnd()
+

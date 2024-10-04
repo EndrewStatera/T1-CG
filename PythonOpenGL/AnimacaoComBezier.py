@@ -73,7 +73,7 @@ def DesenhaPersonagem():
     pass
 
 def DesenhaTriangulo():
-    SetColor(Red)
+    SetColor(Black)
     glTranslatef(53, 33, 0)
     Character.desenhaPoligono()
     pass
@@ -109,6 +109,8 @@ def CriaInstancias():
 # ***********************************************************************************
 def CriaCurvas():
     global Curvas
+    SetColor(Black)
+
     dim = 4
     #Pontos de Controle
     p0 = Ponto(0*dim, 0)
@@ -152,7 +154,25 @@ def CriaCurvas():
     Curvas.append(C)
     C = Bezier(p4, p0, p1)
     Curvas.append(C)
-    
+
+    for i in range(len(Curvas)):
+        c1 = Curvas[i]
+        for j in range(len(Curvas)):
+            c2 = Curvas[j]
+            if curvas_adjacentes(c1, c2) and c1 != c2:
+                c1.add_adjacente(c2)
+                c2.add_adjacente(c1)
+
+def curvas_adjacentes(c1, c2):
+    print(c1.getPC(0).x)
+    ponto_inicial1 = c1.getPC(0)
+    ponto_final1 = c1.getPC(2)
+    pontos_inicial2 = c2.getPC(0)
+    pontos_final2 = c2.getPC(2)
+    return (((ponto_inicial1.x == pontos_inicial2.x and ponto_inicial1.y == pontos_inicial2.y) or
+            (ponto_final1.x == pontos_final2.x and ponto_final1.y == pontos_final2.y)) or
+            (ponto_final1.x == pontos_inicial2.x and ponto_final1.y == pontos_final2.y))
+
 
 # ***********************************************************************************
 def init():
@@ -290,8 +310,10 @@ def arrow_keys(a_keys: int, x: int, y: int):
     if a_keys == GLUT_KEY_DOWN:       # Se pressionar DOWN
         pass
     if a_keys == GLUT_KEY_LEFT:       # Se pressionar LEFT
-        Personagens[0].posicao.x -= 0.5
-        Personagens[0].printT()
+        P = Personagens[0].translate(-DeltaT)
+        Personagens[0].posicao.x = P.x
+        Personagens[0].posicao.y = P.y
+        #Personagens[0].posicao.x -= 0.5
     if a_keys == GLUT_KEY_RIGHT:      # Se pressionar RIGHT
         Personagens[0].rotacao += 1
     if a_keys == GLUT_KEY_UP:      # Se pressionar RIGHT

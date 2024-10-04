@@ -14,7 +14,7 @@ from Ponto import *
 class InstanciaBZ:   
     def __init__(self):
         self.t = 0
-        print(self.tt)
+        print(self.t)
         self.posicao = Ponto (0,0,0) 
         self.escala = Ponto (1,1,1)
         self.rotacao:float = 0.0
@@ -45,11 +45,13 @@ class InstanciaBZ:
         glPopMatrix()
         
     def translate(self, delta):
-        P = self.curva.Calcula(self.tt)
+        P = self.curva.Calcula(self.t)
         if self.t <= 1.0:
             self.t += delta
         else:
             self.t = 0.0
+            self.curva = self.curva.random_curve()
+            self.curva.change_curve_color()
         return P
     
     @classmethod
@@ -58,7 +60,7 @@ class InstanciaBZ:
         pass
 
     def printT(self):
-        print(self.tt)
+        print(self.t)
     @classmethod
     def calculaDeslocamento(self, deslocamento):
         t = deslocamento
