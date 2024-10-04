@@ -13,11 +13,12 @@ from Ponto import *
 """ Classe Instancia """
 class InstanciaBZ:   
     def __init__(self):
+        self.t = 0
+        print(self.tt)
         self.posicao = Ponto (0,0,0) 
         self.escala = Ponto (1,1,1)
         self.rotacao:float = 0.0
         self.modelo = None
-        self.t = 0.0
     
     """ Imprime os valores de cada eixo do ponto """
     # Faz a impressao usando sobrecarga de funcao
@@ -43,16 +44,21 @@ class InstanciaBZ:
         self.modelo()
         glPopMatrix()
         
-    @classmethod
     def translate(self, delta):
-        P = self.curva.Calcula(delta)
+        P = self.curva.Calcula(self.tt)
+        if self.t <= 1.0:
+            self.t += delta
+        else:
+            self.t = 0.0
         return P
     
     @classmethod
     def associaCurva(self ,curva):
         self.curva = curva
         pass
-        
+
+    def printT(self):
+        print(self.tt)
     @classmethod
     def calculaDeslocamento(self, deslocamento):
         t = deslocamento

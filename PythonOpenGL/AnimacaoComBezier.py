@@ -58,7 +58,7 @@ def CarregaModelos():
     global MeiaSeta, Mastro
     MeiaSeta.LePontosDeArquivo("MeiaSeta.txt")
     Mastro.LePontosDeArquivo("Mastro.txt")
-    #Mapa.LePontosDeArquivo("EstadoRS.txt")
+    Mapa.LePontosDeArquivo("EstadoRS.txt")
     Character.LePontosDeArquivo("character.txt")
     #A, B = Mapa.getLimits()
     print("Limites do Mapa")
@@ -291,7 +291,7 @@ def arrow_keys(a_keys: int, x: int, y: int):
         pass
     if a_keys == GLUT_KEY_LEFT:       # Se pressionar LEFT
         Personagens[0].posicao.x -= 0.5
-        
+        Personagens[0].printT()
     if a_keys == GLUT_KEY_RIGHT:      # Se pressionar RIGHT
         Personagens[0].rotacao += 1
     if a_keys == GLUT_KEY_UP:      # Se pressionar RIGHT
