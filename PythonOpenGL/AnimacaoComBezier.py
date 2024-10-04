@@ -25,6 +25,7 @@ from Poligonos import *
 from InstanciaBZ import *
 from Bezier import *
 from ListaDeCoresRGB import *
+from Character import *
 # ***********************************************************************************
 
 # Modelos de Objetos
@@ -45,6 +46,11 @@ Curvas = []
 
 angulo = 0.0
 
+#Delta T
+global t
+global DeltaT
+t = 0.0
+DeltaT = 1/40
 # ***********************************************************************************
 #
 # ***********************************************************************************
@@ -87,11 +93,12 @@ def CriaInstancias():
     global Personagens
 
     Personagens.append(InstanciaBZ())
+    #Personagens[0] = Character(DesenhaTrianguloCerto, Ponto(0,0), Ponto (1,1,1), Curvas[0])
     Personagens[0].modelo = DesenhaTrianguloCerto
     Personagens[0].rotacao = 0
     Personagens[0].posicao = Ponto(0,0)
     Personagens[0].escala = Ponto (1,1,1) 
-    
+    Personagens[0].associaCurva(Curvas[2])
     Personagens.append(InstanciaBZ())
     Personagens[1].modelo = DesenhaPersonagem
     Personagens[1].rotacao = 0
@@ -152,10 +159,10 @@ def init():
     global Min, Max
     # Define a cor do fundo da tela
     glClearColor(1, 1, 1, 1)
-
+    
+    CriaCurvas()
     CarregaModelos()
     CriaInstancias()
-    CriaCurvas()
 
     d:float = 20 #tamanho da janela
     Min = Ponto(-d,-d)
@@ -288,7 +295,11 @@ def arrow_keys(a_keys: int, x: int, y: int):
     if a_keys == GLUT_KEY_RIGHT:      # Se pressionar RIGHT
         Personagens[0].rotacao += 1
     if a_keys == GLUT_KEY_UP:      # Se pressionar RIGHT
-        Personagens[0].posicao.x += 0.5
+        #Personagens[0].posicao.x += 0.5
+        P = Personagens[0].translate(DeltaT)
+        Personagens[0].posicao.x = P.x
+        Personagens[0].posicao.y = P.y
+        
 
     glutPostRedisplay()
 

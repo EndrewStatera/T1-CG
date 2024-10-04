@@ -12,12 +12,13 @@ class Character:
         pass
     
     @classmethod
-    def translate(self, direction):
-        self.calculaDeslocamento(direction)
-        pass
+    def translate(self):
+        P = self.curva.Calcula()
+        return P
+        
     
     @classmethod
-    def associaCurva(self ,curva):
+    def associaCurva(self, curva):
         self.curva = curva
         pass
         
