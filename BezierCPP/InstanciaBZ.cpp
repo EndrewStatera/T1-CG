@@ -45,6 +45,7 @@ InstanciaBZ::InstanciaBZ()
     Rotacao = 0;
     Posicao = Ponto(0,0,0);
     Escala = Ponto(1,1,1);
+    Velocidade = 1;
     
     nroDaCurva = 0;
     proxCurva = -1;
@@ -98,21 +99,5 @@ void InstanciaBZ::AtualizaPosicao(float tempoDecorrido)
     //cout << "AtualizaPosicao" << endl;
 }
 
-int InstanciaBZ::numeroRand(int dist){
-    std::random_device rd;
-    std::mt19937::result_type seed = rd() ^ (
-            (std::mt19937::result_type)
-            std::chrono::duration_cast<std::chrono::seconds>(
-                std::chrono::system_clock::now().time_since_epoch()
-                ).count() +
-            (std::mt19937::result_type)
-            std::chrono::duration_cast<std::chrono::microseconds>(
-                std::chrono::high_resolution_clock::now().time_since_epoch()
-                ).count() );
 
-    std::mt19937 gen(seed);
-    std::uniform_int_distribution<unsigned> distrib(0, dist);
-
-    return distrib(gen);
-}
 

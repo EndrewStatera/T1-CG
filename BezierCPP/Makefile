@@ -1,7 +1,7 @@
 # Makefile para Linux e macOS
 
 PROG = bezier
-FONTES = AnimacaoComBezier.cpp Bezier.cpp InstanciaBZ.cpp ListaDeCoresRGB.cpp Poligono.cpp Ponto.cpp Temporizador.cpp Graph.cpp
+FONTES = AnimacaoComBezier.cpp Bezier.cpp InstanciaBZ.cpp ListaDeCoresRGB.cpp Poligono.cpp Ponto.cpp Temporizador.cpp
 OBJETOS = $(FONTES:.cpp=.o)
 CPPFLAGS = -g -O3 -DGL_SILENCE_DEPRECATION -Wno-deprecated # -Wall -g  # Todas as warnings, infos de debug
 CC = g++

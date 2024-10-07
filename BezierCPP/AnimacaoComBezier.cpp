@@ -38,7 +38,6 @@ using namespace std;
 #include "Ponto.h"
 #include "Poligono.h"
 #include "InstanciaBZ.h"
-#include "Graph.h"
 
 #include "Temporizador.h"
 #include "ListaDeCoresRGB.h"
@@ -53,8 +52,10 @@ Bezier Curvas[20];
 unsigned int nCurvas;
 
 Ponto pontos[100];
+int curvasConectadas[30][30] = {-1};
+int nConexoesPorPonto[50];
+unsigned int nPontos;
 
-Graph graph(100);
 
 // Limites l�gicos da �rea de desenho
 Ponto Min, Max;
@@ -70,7 +71,7 @@ double nFrames = 0;
 double TempoTotal = 0;
 
 double t=0.0;
-double DeltaT = 1.0/40;
+double DeltaT = 1.0/50;
 
 // **********************************************************************
 //
@@ -136,7 +137,7 @@ void DesenhaEixos()
 
 void DesenhaPersonagem()
 {
-    defineCor(Copper);
+    defineCor(OrangeRed);
     glTranslatef(53,33,0);
     Mastro.desenhaPoligono();
 }
@@ -145,6 +146,7 @@ void DesenhaPersonagem()
 // **********************************************************************
 void DesenhaTriangulo()
 {
+    defineCor(OrangeRed);
     glBegin(GL_TRIANGLES);
         glVertex2f(-0.3,-0.3);
         glVertex2f(0, 0.3);
@@ -158,16 +160,26 @@ void CriaInstancias()
 {
     Personagens[0].Posicao = Ponto(0, 0);
     Personagens[0].Rotacao = 0;
-    Personagens[0].modelo = DesenhaPersonagem;
+    Personagens[0].modelo = DesenhaTriangulo;
     Personagens[0].Escala = Ponto(1, 1, 1);
+    Personagens[0].Curva = Curvas[0];
+    Personagens[0].Velocidade = 1.1;
 
     Personagens[1].Posicao = Ponto(0, 0);
     Personagens[1].Rotacao = 0;
     Personagens[1].modelo = DesenhaTriangulo;
     Personagens[1].Escala = Ponto(1, 1, 1);
     Personagens[1].Curva = Curvas[0];
+    Personagens[1].Velocidade = 1;
 
-    nInstancias = 2;
+    Personagens[2].Posicao = Ponto(0, 0);
+    Personagens[2].Rotacao = 0;
+    Personagens[2].modelo = DesenhaTriangulo;
+    Personagens[2].Escala = Ponto(1, 1, 1);
+    Personagens[2].Curva = Curvas[0];
+    Personagens[2].Velocidade = 0.8;
+
+    nInstancias = 3;
 
 }
 // **********************************************************************
@@ -192,36 +204,72 @@ void CarregaModelos()
 // **********************************************************************
 void CriaCurvas()
 {   
-    Ponto topoEsquerda = Ponto(-2,3);
-    Ponto topoDireita = Ponto(2,3);
-    Ponto meioEsquerda = Ponto(-4,0);
-    Ponto meioDireita = Ponto(4,0);
-    Ponto baixoEsquerda = Ponto(-2,-3);
-    Ponto baixoDireita = Ponto(2,-3);
-    Ponto meio = Ponto(0,0);
+    pontos[0] = Ponto(-2,3);
+    pontos[1] = Ponto(2,3);
+    pontos[2] = Ponto(-4,0);
+    pontos[3] = Ponto(0,0);
+    pontos[4] = Ponto(4,0);
+    pontos[5] = Ponto(-2,-3);
+    pontos[6] = Ponto(2,-3);
 
-    Curvas[0] = Bezier(topoEsquerda,meio,topoDireita);
-    Curvas[1] = Bezier(topoDireita, meio, meioDireita);
-    Curvas[2] = Bezier(meioDireita, meio, baixoDireita);
-    Curvas[3] = Bezier(baixoDireita, meio, baixoEsquerda);
-    Curvas[4] = Bezier(baixoEsquerda, meio,meioEsquerda);
-    Curvas[5] = Bezier(meioEsquerda, meio, topoEsquerda);
-    Curvas[6] = Bezier(topoEsquerda, Ponto(4,6), meio);
-    Curvas[7] = Bezier(topoDireita, meioDireita, meio);
-    Curvas[8] = Bezier(meioDireita, baixoDireita, meio);
-    Curvas[9] = Bezier(baixoDireita, baixoEsquerda, meio);
-    Curvas[10] = Bezier(baixoEsquerda, meioEsquerda, meio);
-    Curvas[11] = Bezier(meioEsquerda, topoEsquerda, meio);
-    Curvas[12] = Bezier(meioEsquerda, meio, meioDireita);
+    nPontos = 7;
+
+    Curvas[0] = Bezier(pontos[0],pontos[3],pontos[1]);
+    Curvas[1] = Bezier(pontos[1], pontos[3], pontos[4]);
+    Curvas[2] = Bezier(pontos[4], pontos[3], pontos[6]);
+    Curvas[3] = Bezier(pontos[6], pontos[3], pontos[5]);
+    Curvas[4] = Bezier(pontos[5], pontos[3],pontos[2]);
+    Curvas[5] = Bezier(pontos[2], pontos[3], pontos[0]);
+    Curvas[6] = Bezier(pontos[0], pontos[1], pontos[3]);
+    Curvas[7] = Bezier(pontos[1], pontos[4], pontos[3]);
+    Curvas[8] = Bezier(pontos[4], pontos[6], pontos[3]);
+    Curvas[9] = Bezier(pontos[6], pontos[5], pontos[3]);
+    Curvas[10] = Bezier(pontos[5], pontos[2], pontos[3]);
+    Curvas[11] = Bezier(pontos[2], pontos[0], pontos[3]);
+    Curvas[12] = Bezier(pontos[2], pontos[3], pontos[4]);
     
     nCurvas = 13;
+
+    
 }
+
+bool comparaPontos(Ponto a, Ponto b){
+    return a.x == b.x && a.y == b.y && a.z == b.z;
+}
+void linkarPontosComCurva(){
+    for(int i = 0; i < nPontos; i++){
+        for(int j = 0; j < nCurvas; j++){
+            if(comparaPontos(pontos[i], Curvas[j].getPC(0)) || comparaPontos(pontos[i], Curvas[j].getPC(2))){
+                curvasConectadas[i][nConexoesPorPonto[i]] = j;
+                nConexoesPorPonto[i]++;
+            }
+        }
+    }
+}
+
+int getProxCurva(Ponto p, Bezier curvaAtual){
+    for(int i = 0; i < nPontos; i++){
+        if(comparaPontos(pontos[i], p)){
+            int rand = p.numeroRand(nConexoesPorPonto[i]-1);
+            while(comparaPontos(Curvas[curvasConectadas[i][rand]].getPC(0),curvaAtual.getPC(0)) && comparaPontos(Curvas[curvasConectadas[i][rand]].getPC(2),curvaAtual.getPC(2))){
+                rand = p.numeroRand(nConexoesPorPonto[i]-1);
+            }
+            return curvasConectadas[i][rand];
+        }
+    }
+    return -1;
+}
+
 // **********************************************************************
 //
 // **********************************************************************
 void AssociaPersonagemComCurva(int p, int c)
 {
     Personagens[p].Curva = Curvas[c];
+}
+void AssociaPersonagemComCurva(int p, Bezier *c)
+{
+    Personagens[p].Curva = *c;
 }
 // **********************************************************************
 //
@@ -239,6 +287,7 @@ void init()
 
     // carrega as curvas que farao parte do cenario
     CriaCurvas();
+    linkarPontosComCurva();
 
     // define is limites da área de desenho
     float d = 15;
@@ -274,10 +323,7 @@ void DesenhaCurvas()
 {
     for (int i = 0; i < nCurvas; i++)
     {
-        defineCor(OrangeRed);
-        if(i >= nCurvas/2){
-            defineCor(YellowGreen);
-        }
+        defineCor(Curvas[i].cor);
         glLineWidth(2);
         Curvas[i].Traca();
 
@@ -288,46 +334,54 @@ void DesenhaCurvas()
 }
 
 void anda(int p){
-    Ponto I;
-    Ponto J;
-    //cout << "DeltaT: " << DeltaT << endl;
-    
-    I = Personagens[p].Curva.Calcula(t);
-    J = Personagens[p].Curva.Calcula(t+DeltaT*2);
-    //P.imprime("P: ");
+    Ponto pontoAtual;
+    Ponto proxPonto;
+    pontoAtual = Personagens[p].Curva.Calcula(Personagens[p].tAtual);
+    Personagens[p].Posicao = pontoAtual;
 
-    Personagens[p].Posicao.x = I.x;
-    Personagens[p].Posicao.y = I.y;
-
-    Personagens[p].Rotacao = 180/M_PI * atan2(J.y-I.y,J.x-I.x) - 90;
-        
-    if(t <= 1.0 && Personagens[p].direcao == 0){
-        t += DeltaT;
-        if(t >= 0.5 && Personagens[p].proxCurva == -1){
-            Personagens[p].proxCurva = Personagens[p].numeroRand(12);
-        }
-    }else if(t >= 0.0 && Personagens[p].direcao == 1){
-        t -= DeltaT;
-        if(t <= 0.5 && Personagens[p].proxCurva == -1){
-            Personagens[p].proxCurva = Personagens[p].numeroRand(12);
-        }
-    }else{
-        if(Personagens[p].Curva.getPC(3) == Curvas[Personagens[p].proxCurva].getPC(0)){
-            Personagens[p].direcao = 0;
-            t = 0.0;
-        }else if(Personagens[p].Curva.getPC(3) == Curvas[Personagens[p].proxCurva].getPC(3)){
-            Personagens[p].direcao = 1;
-            //t = 0.0;
+    if(Personagens[p].direcao == 0){//Indo do inicio ao fim da curva
+        proxPonto = Personagens[p].Curva.Calcula(Personagens[p].tAtual+DeltaT*3);
+        if(Personagens[p].tAtual < 1.0){
+            Personagens[p].tAtual += DeltaT*Personagens[p].Velocidade;
+            if(Personagens[p].tAtual >= 0.5 && Personagens[p].proxCurva == -1){
+                Personagens[p].proxCurva = getProxCurva(Personagens[p].Curva.getPC(2),Personagens[p].Curva);
+                Curvas[Personagens[p].proxCurva].cor = OrangeRed;
+            }
         }else{
-            Personagens[p].direcao = 0;
-            t = 0.0;
+            if(comparaPontos(Curvas[Personagens[p].proxCurva].getPC(0), Personagens[p].Curva.getPC(2))){
+                Personagens[p].tAtual = 0.0;
+                Personagens[p].direcao = 0;
+            }else if(comparaPontos(Curvas[Personagens[p].proxCurva].getPC(2), Personagens[p].Curva.getPC(2))){
+                Personagens[p].direcao = 1;
+            }
+            AssociaPersonagemComCurva(p,Personagens[p].proxCurva);
+            Curvas[Personagens[p].proxCurva].cor = GreenCopper;
+            Personagens[p].proxCurva = -1;
         }
-        //Personagens[p].Curva = curvasTopoDireita[Personagens[p].proxCurva];
-        AssociaPersonagemComCurva(p,Personagens[p].proxCurva);
-        Personagens[p].proxCurva = -1;
         
     }
     
+    else{//Indo do fim ao inicio da curva
+        proxPonto = Personagens[p].Curva.Calcula(Personagens[p].tAtual-DeltaT*3);
+        if(Personagens[p].tAtual > 0.0){
+            Personagens[p].tAtual -= DeltaT*Personagens[p].Velocidade;
+            if(Personagens[p].tAtual <= 0.5 && Personagens[p].proxCurva == -1){
+                Personagens[p].proxCurva = getProxCurva(Personagens[p].Curva.getPC(0),Personagens[p].Curva);
+                Curvas[Personagens[p].proxCurva].cor = OrangeRed;
+            }
+        }else{
+            if(comparaPontos(Curvas[Personagens[p].proxCurva].getPC(2),Personagens[p].Curva.getPC(0))){
+                Personagens[p].tAtual = 1.0;
+                Personagens[p].direcao = 1;
+            }else if(comparaPontos(Curvas[Personagens[p].proxCurva].getPC(0), Personagens[p].Curva.getPC(0))){
+                Personagens[p].direcao = 0;
+            }
+            AssociaPersonagemComCurva(p,Personagens[p].proxCurva);
+            Curvas[Personagens[p].proxCurva].cor = GreenCopper;
+            Personagens[p].proxCurva = -1;
+        }
+    }
+    Personagens[p].Rotacao = 180/M_PI * atan2(proxPonto.y-pontoAtual.y,proxPonto.x-pontoAtual.x) - 90;
 }
 // **********************************************************************
 //  void display( void )
@@ -355,7 +409,9 @@ void display(void)
     
     // Desenha os personagens no tempo T2.getDeltaT()
     DesenhaPersonagens(T2.getDeltaT());
+    anda(0);
     anda(1);
+    anda(2);
     glutSwapBuffers();
 }
 

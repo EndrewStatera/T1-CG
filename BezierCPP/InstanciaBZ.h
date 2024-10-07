@@ -40,7 +40,6 @@ public:
 
     void desenha();
     void AtualizaPosicao(float tempoDecorrido);
-    int numeroRand(int dist);
     Ponto ObtemPosicao();
 };
 
