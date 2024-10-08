@@ -49,6 +49,7 @@ Temporizador T2;
 InstanciaBZ Personagens[10];
 
 Bezier Curvas[20];
+int indexCurva = 0;
 unsigned int nCurvas;
 
 Ponto pontos[100];
@@ -179,11 +180,11 @@ void CriaInstancias()
     Personagens[2].Curva = Curvas[2];
     Personagens[2].Velocidade = 0.8;*/
 
-        Personagens[0].Posicao = Curvas[0].getPC(0);
+        Personagens[0].Posicao = Curvas[7].getPC(0);
         Personagens[0].Rotacao = 0;
         Personagens[0].modelo = DesenhaPersonagem;
         Personagens[0].Escala = Ponto(1, 1, 1);
-        Personagens[0].Curva = Curvas[0];
+        Personagens[0].Curva = Curvas[7];
         Personagens[0].Velocidade = 1.5;
         Personagens[0].cor = SpicyPink;
 
@@ -306,6 +307,31 @@ int getProxCurva(Ponto p, Bezier curvaAtual){
     return -1;
 }
 
+int getProxCurva(Ponto p, Bezier curvaAtual, int index){
+    indexCurva += index;
+    for(int i = 0; i < nPontos; i++){
+        if(comparaPontos(pontos[i], p)){
+            while(comparaPontos(Curvas[curvasConectadas[i][indexCurva]].getPC(0),curvaAtual.getPC(0)) && comparaPontos(Curvas[curvasConectadas[i][indexCurva]].getPC(2),curvaAtual.getPC(2))){
+                if(index == 1){
+                    indexCurva++;
+                }else{
+                    indexCurva--;
+                }
+            }
+            if(indexCurva > nConexoesPorPonto[i]-1){
+                indexCurva = 0;
+            }
+            if(indexCurva < 0){
+                indexCurva = nConexoesPorPonto[i]-1;
+            }
+            return curvasConectadas[i][indexCurva];
+        }
+    }
+    return -1;
+}
+
+
+
 // **********************************************************************
 //
 // **********************************************************************
@@ -379,61 +405,57 @@ void DesenhaCurvas()
         //DesenhaPoligonoDeControle(i);
     }
 }
+void trocaCurva(int p, int dir){
+    if(p == 0){
+        Curvas[Personagens[p].proxCurva].cor = SkyBlue;
+    }
+    if(dir == 1){
+        if(comparaPontos(Curvas[Personagens[p].proxCurva].getPC(0), Personagens[p].Curva.getPC(2))){
+                Personagens[p].tAtual = 0.0;
+                Personagens[p].direcao = 1;
+            }else if(comparaPontos(Curvas[Personagens[p].proxCurva].getPC(2), Personagens[p].Curva.getPC(2))){
+                Personagens[p].direcao = -1;
+            }
+            AssociaPersonagemComCurva(p,Personagens[p].proxCurva);
+            Personagens[p].proxCurva = -1;
+    }else{
+        if(comparaPontos(Curvas[Personagens[p].proxCurva].getPC(2),Personagens[p].Curva.getPC(0))){
+                Personagens[p].tAtual = 1.0;
+                Personagens[p].direcao = -1;
+            }else if(comparaPontos(Curvas[Personagens[p].proxCurva].getPC(0), Personagens[p].Curva.getPC(0))){
+                Personagens[p].direcao = 1;
+            }
+            AssociaPersonagemComCurva(p,Personagens[p].proxCurva);
+            Personagens[p].proxCurva = -1;
+    }
+}
 
 void anda(int p){
-    Ponto pontoAtual;
-    Ponto proxPonto;
-    //double DeltaT = 1.0/50.0;
-    double DeltaT = Personagens[p].Curva.CalculaT(Personagens[p].Velocidade)/10;
-    // << "\nDeltaT: " << DeltaT << "\n";
-    //cout << "\nComprimentoTotalCurva: " << Personagens[p].Curva.ComprimentoTotalDaCurva << "\n";
-    pontoAtual = Personagens[p].Curva.Calcula(Personagens[p].tAtual);
-    Personagens[p].Posicao = pontoAtual;
-
-    if(Personagens[p].direcao == 0){//Indo do inicio ao fim da curva
-        proxPonto = Personagens[p].Curva.Calcula(Personagens[p].tAtual+DeltaT*3);
+    if(Personagens[p].direcao == 1){//Indo do inicio ao fim da curva
         if(Personagens[p].tAtual < 1.0){
-            Personagens[p].tAtual += DeltaT;
             if(Personagens[p].tAtual >= 0.5 && Personagens[p].proxCurva == -1){
                 Personagens[p].proxCurva = getProxCurva(Personagens[p].Curva.getPC(2),Personagens[p].Curva);
-                Curvas[Personagens[p].proxCurva].cor = SpicyPink;
             }
         }else{
-            if(comparaPontos(Curvas[Personagens[p].proxCurva].getPC(0), Personagens[p].Curva.getPC(2))){
-                Personagens[p].tAtual = 0.0;
-                Personagens[p].direcao = 0;
-            }else if(comparaPontos(Curvas[Personagens[p].proxCurva].getPC(2), Personagens[p].Curva.getPC(2))){
-                Personagens[p].direcao = 1;
-            }
-            AssociaPersonagemComCurva(p,Personagens[p].proxCurva);
-            Curvas[Personagens[p].proxCurva].cor = SkyBlue;
-            Personagens[p].proxCurva = -1;
+            trocaCurva(p,1);
         }
         
-    }
-    
-    else{//Indo do fim ao inicio da curva
-        proxPonto = Personagens[p].Curva.Calcula(Personagens[p].tAtual-DeltaT*3);
+    }else{//Indo do fim ao inicio da curva
         if(Personagens[p].tAtual > 0.0){
-            Personagens[p].tAtual -= DeltaT;
             if(Personagens[p].tAtual <= 0.5 && Personagens[p].proxCurva == -1){
                 Personagens[p].proxCurva = getProxCurva(Personagens[p].Curva.getPC(0),Personagens[p].Curva);
-                Curvas[Personagens[p].proxCurva].cor = SpicyPink;
             }
         }else{
-            if(comparaPontos(Curvas[Personagens[p].proxCurva].getPC(2),Personagens[p].Curva.getPC(0))){
-                Personagens[p].tAtual = 1.0;
-                Personagens[p].direcao = 1;
-            }else if(comparaPontos(Curvas[Personagens[p].proxCurva].getPC(0), Personagens[p].Curva.getPC(0))){
-                Personagens[p].direcao = 0;
-            }
-            AssociaPersonagemComCurva(p,Personagens[p].proxCurva);
-            Curvas[Personagens[p].proxCurva].cor = SkyBlue;
-            Personagens[p].proxCurva = -1;
+            trocaCurva(p,-1);
         }
     }
-    Personagens[p].Rotacao = 180/M_PI * atan2(proxPonto.y-pontoAtual.y,proxPonto.x-pontoAtual.x) - 90;
+    Personagens[p].translate();
 }
+void anda(int p, int reverse){
+    Personagens[p].translate(reverse);
+}
+
+
 // **********************************************************************
 //  void display( void )
 // **********************************************************************
@@ -489,6 +511,20 @@ void ContaTempo(double tempo)
         }
     }
 }
+/*bool verificaColisao(int p1, int p2) {
+    double raioColisao = 0.01;
+    double distancia =
+        calculaDistancia(Personagens[p1].Posicao, Personagens[p2].Posicao);
+    return distancia <= raioColisao;
+}
+
+void buscaColisao() {
+    for (int i = 1; i < nInstancias; i++) {
+        if (verificaColisao(i, 0)) {
+            ContaTempo(2);
+        }
+    }
+}*/
 // **********************************************************************
 //  void keyboard ( unsigned char key, int x, int y )
 // **********************************************************************
@@ -519,25 +555,30 @@ void arrow_keys(int a_keys, int x, int y)
     switch (a_keys)
     {
     case GLUT_KEY_LEFT:
-        
-        Personagens[0].Posicao.x -= 0.5;
+    Curvas[Personagens[0].proxCurva].cor = SkyBlue;
+    if(Personagens[0].direcao == 1){//Indo do inicio ao fim da curva
+        Personagens[0].proxCurva = getProxCurva(Personagens[0].Curva.getPC(2),Personagens[0].Curva,1);
+    }else{
+        Personagens[0].proxCurva = getProxCurva(Personagens[0].Curva.getPC(0),Personagens[0].Curva,1);
+    }
+    Curvas[Personagens[0].proxCurva].cor = OrangeRed;
         break;
     case GLUT_KEY_RIGHT:
-        Personagens[0].Posicao.x += 0.5;
+    Curvas[Personagens[0].proxCurva].cor = SkyBlue;
+    if(Personagens[0].direcao == 1){//Indo do inicio ao fim da curva
+        Personagens[0].proxCurva = getProxCurva(Personagens[0].Curva.getPC(2),Personagens[0].Curva,-1);
+    }else{
+        Personagens[0].proxCurva = getProxCurva(Personagens[0].Curva.getPC(0),Personagens[0].Curva,-1);
+    }
+    Curvas[Personagens[0].proxCurva].cor = OrangeRed;
         break;
     case GLUT_KEY_UP:     // Se pressionar UP
-        t += Personagens[0].Curva.CalculaT(Personagens[0].Velocidade)/10;
-        P = Personagens[0].Curva.Calcula(t);
-        Personagens[0].Posicao = P;
-        //glutFullScreen(); // Vai para Full Screen
+        anda(0);
+        Curvas[Personagens[0].proxCurva].cor = OrangeRed;
         break;
-    case GLUT_KEY_DOWN: // Se pressionar UP
-        t -= Personagens[0].Curva.CalculaT(Personagens[0].Velocidade)/10;
-        P = Personagens[0].Curva.Calcula(t);
-        Personagens[0].Posicao = P;
-                        // Reposiciona a janela
-        //glutPositionWindow(50, 50);
-        //glutReshapeWindow(700, 500);
+    case GLUT_KEY_DOWN: // Se pressionar DOWN
+        anda(0,-1);
+        Curvas[Personagens[0].proxCurva].cor = OrangeRed;
         break;
     default:
         break;
