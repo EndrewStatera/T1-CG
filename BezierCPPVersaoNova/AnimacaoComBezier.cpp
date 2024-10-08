@@ -71,7 +71,7 @@ double nFrames = 0;
 double TempoTotal = 0;
 
 double t=0.0;
-double DeltaT = 1.0/50;
+//double DeltaT = 1.0/50;
 
 // **********************************************************************
 //
@@ -137,7 +137,7 @@ void DesenhaEixos()
 
 void DesenhaPersonagem()
 {
-    defineCor(OrangeRed);
+    //defineCor(OrangeRed);
     glTranslatef(53,33,0);
     Mastro.desenhaPoligono();
 }
@@ -146,7 +146,7 @@ void DesenhaPersonagem()
 // **********************************************************************
 void DesenhaTriangulo()
 {
-    defineCor(OrangeRed);
+    //defineCor(OrangeRed);
     glBegin(GL_TRIANGLES);
         glVertex2f(-0.3,-0.3);
         glVertex2f(0, 0.3);
@@ -158,28 +158,37 @@ void DesenhaTriangulo()
 // **********************************************************************
 void CriaInstancias()
 {
-    Personagens[0].Posicao = Ponto(0, 0);
+    /*Personagens[0].Posicao = Curvas[0].getPC(0);
     Personagens[0].Rotacao = 0;
     Personagens[0].modelo = DesenhaTriangulo;
     Personagens[0].Escala = Ponto(1, 1, 1);
     Personagens[0].Curva = Curvas[0];
-    Personagens[0].Velocidade = 3;
+    Personagens[0].Velocidade = 1.1;
 
-    Personagens[1].Posicao = Ponto(0, 0);
+    Personagens[1].Posicao = Curvas[1].getPC(0);
     Personagens[1].Rotacao = 0;
     Personagens[1].modelo = DesenhaTriangulo;
     Personagens[1].Escala = Ponto(1, 1, 1);
-    Personagens[1].Curva = Curvas[0];
-    Personagens[1].Velocidade = 3;
+    Personagens[1].Curva = Curvas[1];
+    Personagens[1].Velocidade = 1;
 
-    Personagens[2].Posicao = Ponto(0, 0);
+    Personagens[2].Posicao = Curvas[2].getPC(0);
     Personagens[2].Rotacao = 0;
     Personagens[2].modelo = DesenhaTriangulo;
     Personagens[2].Escala = Ponto(1, 1, 1);
-    Personagens[2].Curva = Curvas[0];
-    Personagens[2].Velocidade = 3;
+    Personagens[2].Curva = Curvas[2];
+    Personagens[2].Velocidade = 0.8;*/
 
-    nInstancias = 3;
+    nInstancias = 10;
+    for(int i = 0; i < nInstancias; i++){
+        Personagens[i].Posicao = Curvas[i].getPC(0);
+        Personagens[i].Rotacao = 0;
+        Personagens[i].modelo = DesenhaTriangulo;
+        Personagens[i].Escala = Ponto(1, 1, 1);
+        Personagens[i].Curva = Curvas[i];
+        Personagens[i].Velocidade = 1 + i/10;
+        Personagens[i].cor = i;
+    }
 
 }
 // **********************************************************************
@@ -187,8 +196,7 @@ void CriaInstancias()
 // **********************************************************************
 void CarregaModelos()
 {
-    Mapa.LePoligono("EstadoRS.txt");
-    MeiaSeta.LePoligono("MeiaSeta.txt");
+    Mapa.LePoligono("MeiaSeta.txt");
     Mastro.LePoligono("Mastro.txt");
     
     Ponto A, B;
@@ -204,7 +212,7 @@ void CarregaModelos()
 // **********************************************************************
 void CriaCurvas()
 {   
-    pontos[0] = Ponto(-2,3);
+    /*pontos[0] = Ponto(-2,3);
     pontos[1] = Ponto(2,3);
     pontos[2] = Ponto(-4,0);
     pontos[3] = Ponto(0,0);
@@ -228,8 +236,38 @@ void CriaCurvas()
     Curvas[11] = Bezier(pontos[2], pontos[0], pontos[3]);
     Curvas[12] = Bezier(pontos[2], pontos[3], pontos[4]);
     
-    nCurvas = 13;
+    nCurvas = 13;*/
 
+    Mapa.LePoligono("verticesTeste.txt");
+    nPontos = Mapa.getNVertices();
+    for(int i = 0; i < Mapa.getNVertices(); i++){
+        pontos[i] = Mapa.getVertice(i);
+        //cout << "\nPonto: " << i << ": " << pontos[i].x << pontos[i].y;
+    }
+    Curvas[0] = Bezier(pontos[0], pontos[10], pontos[1]);
+    Curvas[1] = Bezier(pontos[1], pontos[10], pontos[2]);
+    Curvas[2] = Bezier(pontos[2], pontos[10], pontos[3]);
+    Curvas[3] = Bezier(pontos[3], pontos[10], pontos[4]);
+    Curvas[4] = Bezier(pontos[4], pontos[10], pontos[5]);
+    Curvas[5] = Bezier(pontos[5], pontos[10], pontos[6]);
+    Curvas[6] = Bezier(pontos[6], pontos[10], pontos[7]);
+    Curvas[7] = Bezier(pontos[7], pontos[10], pontos[8]);
+    Curvas[8] = Bezier(pontos[8], pontos[10], pontos[0]);
+    Curvas[9] = Bezier(pontos[0], pontos[11], pontos[8]);
+    Curvas[10] = Bezier(pontos[8], pontos[11], pontos[7]);
+    Curvas[11] = Bezier(pontos[7], pontos[11], pontos[6]);
+    Curvas[12] = Bezier(pontos[6], pontos[11], pontos[5]);
+    Curvas[13] = Bezier(pontos[5], pontos[11], pontos[4]);
+    Curvas[14] = Bezier(pontos[4], pontos[11], pontos[3]);
+    Curvas[15] = Bezier(pontos[3], pontos[11], pontos[2]);
+    Curvas[16] = Bezier(pontos[2], pontos[11], pontos[1]);
+    Curvas[17] = Bezier(pontos[1], pontos[11], pontos[0]);
+    Curvas[18] = Bezier(pontos[9], pontos[11], pontos[8]);
+    Curvas[19] = Bezier(pontos[9], pontos[11], pontos[0]);
+
+
+
+    nCurvas = 20;
     
 }
 
@@ -244,6 +282,7 @@ void linkarPontosComCurva(){
                 nConexoesPorPonto[i]++;
             }
         }
+        cout << "\nPonto " << i << "tem: " << nConexoesPorPonto[i] << "conexões";
     }
 }
 
@@ -276,18 +315,18 @@ void AssociaPersonagemComCurva(int p, Bezier *c)
 // **********************************************************************
 void init()
 {
+    // carrega as curvas que farao parte do cenario
+    CriaCurvas();
+    linkarPontosComCurva();
+
     // Define a cor do fundo da tela
     glClearColor(0.0f, 0.2f, 0.1f, 0.2f);
 
     // carrega os modelos armazenados em arquivos
-    CarregaModelos();
+    //CarregaModelos();
     
     // cria instancias do modelos
     CriaInstancias();
-
-    // carrega as curvas que farao parte do cenario
-    CriaCurvas();
-    linkarPontosComCurva();
 
     // define is limites da área de desenho
     float d = 15;
@@ -302,6 +341,7 @@ void DesenhaPersonagens(float tempoDecorrido)
     for (int i = 0; i < nInstancias; i++)
     {
         Personagens[i].AtualizaPosicao(tempoDecorrido);
+        defineCor(Personagens[i].cor);
         Personagens[i].desenha();
     }
 }
@@ -336,7 +376,10 @@ void DesenhaCurvas()
 void anda(int p){
     Ponto pontoAtual;
     Ponto proxPonto;
-    DeltaT = Personagens[p].Curva.CalculaT(Personagens[p].Velocidade*TempoTotal);
+    //double DeltaT = 1.0/50.0;
+    double DeltaT = Personagens[p].Curva.CalculaT(Personagens[p].Velocidade)/10;
+    // << "\nDeltaT: " << DeltaT << "\n";
+    //cout << "\nComprimentoTotalCurva: " << Personagens[p].Curva.ComprimentoTotalDaCurva << "\n";
     pontoAtual = Personagens[p].Curva.Calcula(Personagens[p].tAtual);
     Personagens[p].Posicao = pontoAtual;
 
@@ -410,9 +453,9 @@ void display(void)
     
     // Desenha os personagens no tempo T2.getDeltaT()
     DesenhaPersonagens(T2.getDeltaT());
-    anda(0);
-    anda(1);
-    anda(2);
+    for(int i = 0; i < nInstancias; i++){
+        anda(i);
+    }
     glutSwapBuffers();
 }
 

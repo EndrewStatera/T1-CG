@@ -72,6 +72,9 @@ Ponto Bezier::Calcula(double t)
 // **********************************************************************
 double Bezier::CalculaT(double distanciaPercorrida)
 {
+    if(ComprimentoTotalDaCurva == 0){
+        return 0;
+    }
     return (distanciaPercorrida/ComprimentoTotalDaCurva);
 }
 // **********************************************************************
