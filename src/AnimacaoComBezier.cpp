@@ -76,20 +76,33 @@ double t=0.0;
 // **********************************************************************
 //
 // **********************************************************************
+
+int gameOver = 0;
+double accumBuscaColisao = 0;
+void buscaColisao();
+
 void animate()
 {
     double dt;
     dt = T.getDeltaT();
     AccumDeltaT += dt;
+    accumBuscaColisao += dt;
     TempoTotal += dt;
     nFrames++;
 
-    if (AccumDeltaT > 1.0 / 30) // fixa a atualiza��o da tela em 30
+    if (AccumDeltaT > 1.0 / 3) // fixa a atualiza��o da tela em 30
     {
         AccumDeltaT = 0;
         angulo += 2;
-        glutPostRedisplay();
+        if (gameOver = 0)
+            glutPostRedisplay();
     }
+
+    if (accumBuscaColisao > 1) {
+        accumBuscaColisao = 0;
+        buscaColisao();
+    }
+
     if (TempoTotal > 5.0)
     {
         cout << "Tempo Acumulado: " << TempoTotal << " segundos. ";
@@ -380,6 +393,30 @@ void DesenhaCurvas()
     }
 }
 
+bool verificaColisao(int p1, int p2) {
+    double raioColisao = Personagens[p1].Velocidade / 10;
+
+    double distancia = calculaDistancia(Personagens[p1].Posicao, Personagens[p2].Posicao);
+
+    return distancia <= raioColisao * 2;
+}
+
+void buscaColisao() {
+    for (int i = 0; i < nInstancias; i++) {
+        for (int j = i + 1; j < nInstancias; j++)
+        {
+            if (verificaColisao(i, j)) {
+                // handle colision
+                // Personagens[i].direcao = (Personagens[i].direcao + 1) % 2;
+                // cout << "Colisao detectada entre Personagem " << i << " e Personagem " << j << endl;
+                gameOver = 1;
+                
+            }
+        }
+            
+    }
+}
+
 void anda(int p){
     Ponto pontoAtual;
     Ponto proxPonto;
@@ -460,6 +497,7 @@ void display(void)
     
     // Desenha os personagens no tempo T2.getDeltaT()
     DesenhaPersonagens(T2.getDeltaT());
+
     for(int i = 1; i < nInstancias; i++){
         anda(i);
     }
