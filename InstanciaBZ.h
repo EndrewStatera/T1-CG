@@ -40,6 +40,8 @@ public:
 
     void desenha();
     void AtualizaPosicao(float tempoDecorrido);
+    void translate();
+    void translate(int dir);
     Ponto ObtemPosicao();
 };
 

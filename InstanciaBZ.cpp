@@ -50,7 +50,7 @@ InstanciaBZ::InstanciaBZ()
     nroDaCurva = 0;
     proxCurva = -1;
     tAtual = 0.0;
-    direcao = 0;
+    direcao = 1;
 
 }
 InstanciaBZ::InstanciaBZ(Bezier C)
@@ -62,7 +62,22 @@ InstanciaBZ::InstanciaBZ(Bezier C)
     
     Curva = C;
     tAtual = 0;
-    direcao = 0;
+    direcao = 1;
+}
+
+void InstanciaBZ::translate(){
+    double deltaT = Curva.CalculaT(Velocidade)/10*direcao;
+    tAtual += deltaT;
+    Posicao = Curva.Calcula(tAtual);
+    Ponto proxPonto = Curva.Calcula(tAtual+deltaT*3);
+    Rotacao = 180/M_PI * atan2(proxPonto.y-Posicao.y,proxPonto.x-Posicao.x) - 90;
+}
+void InstanciaBZ::translate(int dir){
+    double deltaT = Curva.CalculaT(Velocidade)/10*direcao*dir;
+    tAtual += deltaT;
+    Posicao = Curva.Calcula(tAtual);
+    Ponto proxPonto = Curva.Calcula(tAtual+deltaT*3);
+    Rotacao = 180/M_PI * atan2(proxPonto.y-Posicao.y,proxPonto.x-Posicao.x) - 90;
 }
 
 void InstanciaBZ::desenha()
