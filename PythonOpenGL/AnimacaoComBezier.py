@@ -58,7 +58,7 @@ def CarregaModelos():
     global MeiaSeta, Mastro
     MeiaSeta.LePontosDeArquivo("MeiaSeta.txt")
     Mastro.LePontosDeArquivo("Mastro.txt")
-    Mapa.LePontosDeArquivo("EstadoRS.txt")
+    #Mapa.LePontosDeArquivo("EstadoRS.txt")
     Character.LePontosDeArquivo("character.txt")
     #A, B = Mapa.getLimits()
     print("Limites do Mapa")
@@ -160,8 +160,11 @@ def CriaCurvas():
         for j in range(len(Curvas)):
             c2 = Curvas[j]
             if curvas_adjacentes(c1, c2) and c1 != c2:
+                print("curvas adjacentes")
                 c1.add_adjacente(c2)
                 c2.add_adjacente(c1)
+            else:
+                print("Nao adjacente")
 
 def curvas_adjacentes(c1, c2):
     print(c1.getPC(0).x)
@@ -311,16 +314,14 @@ def arrow_keys(a_keys: int, x: int, y: int):
         pass
     if a_keys == GLUT_KEY_LEFT:       # Se pressionar LEFT
         P = Personagens[0].translate(-DeltaT)
-        Personagens[0].posicao.x = P.x
-        Personagens[0].posicao.y = P.y
-        #Personagens[0].posicao.x -= 0.5
+        #Personagens[0].posicao.x = P.x
+        #Personagens[0].posicao.y = P.y
     if a_keys == GLUT_KEY_RIGHT:      # Se pressionar RIGHT
         Personagens[0].rotacao += 1
     if a_keys == GLUT_KEY_UP:      # Se pressionar RIGHT
-        #Personagens[0].posicao.x += 0.5
         P = Personagens[0].translate(DeltaT)
-        Personagens[0].posicao.x = P.x
-        Personagens[0].posicao.y = P.y
+        #Personagens[0].posicao.x = P.x
+        #Personagens[0].posicao.y = P.y
         
 
     glutPostRedisplay()

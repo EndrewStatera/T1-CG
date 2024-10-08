@@ -92,3 +92,7 @@ class Bezier:
 
         glEnd()
 
+    #Returns 1 if the curve curve link is in the end of this curve, otherwise it's going to return 0
+    def ligacao_curva(self, ponto):
+        a = 0
+
