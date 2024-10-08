@@ -176,7 +176,20 @@ def curvas_adjacentes(c1, c2):
             (ponto_final1.x == pontos_final2.x and ponto_final1.y == pontos_final2.y)) or
             (ponto_final1.x == pontos_inicial2.x and ponto_final1.y == pontos_final2.y))
 
-
+def liga_curvas(c1:Bezier, c2:Bezier):
+    ponto_inicial1 = c1.getPC(0)
+    ponto_final1 = c1.getPC(2)
+    pontos_inicial2 = c2.getPC(0)
+    pontos_final2 = c2.getPC(2)
+    if ponto_inicial1.x == pontos_inicial2.x and ponto_inicial1.y == pontos_inicial2.y:
+        c1.add_adj_inicio(c2)
+        c2.add_adj_inicio(c1)
+    if (ponto_final1.x == pontos_final2.x and ponto_final1.y == pontos_final2.y):
+        c1.add_adj_fim(c2)
+        c2.add_adj_fim(c1)
+    if (ponto_final1.x == pontos_inicial2.x and ponto_final1.y == pontos_final2.y):
+        c1.add_adj_fim(c2)
+        c2.add_adj_inicio(c1)
 # ***********************************************************************************
 def init():
     global Min, Max
@@ -310,7 +323,9 @@ def keyboard(*args):
 def arrow_keys(a_keys: int, x: int, y: int):
     if a_keys == GLUT_KEY_UP:         # Se pressionar UP
         pass
-    if a_keys == GLUT_KEY_DOWN:       # Se pressionar DOWN
+    if a_keys == GLUT_KEY_DOWN:
+        # Se pressionar DOWN
+        Personagens[0].get_next_curve()
         pass
     if a_keys == GLUT_KEY_LEFT:       # Se pressionar LEFT
         P = Personagens[0].translate(-DeltaT)
@@ -322,7 +337,7 @@ def arrow_keys(a_keys: int, x: int, y: int):
         P = Personagens[0].translate(DeltaT)
         #Personagens[0].posicao.x = P.x
         #Personagens[0].posicao.y = P.y
-        
+
 
     glutPostRedisplay()
 

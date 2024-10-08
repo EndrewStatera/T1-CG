@@ -1,4 +1,5 @@
-
+import InstanciaBZ
+import PontoCurva
 from Ponto import Ponto
 from OpenGL.GL import *
 from OpenGL.GLUT import *
@@ -15,11 +16,13 @@ class Bezier:
         #P = self.Coords[0]
         #P.imprime()
 
-    def __init__(self, *args:Ponto):
+    def __init__(self, *args:(Ponto, PontoCurva)):
         #print ("Construtora da Bezier")
         self.ComprimentoTotalDaCurva = 0.0
         self.Coords = []
         self.adjacentes = []
+        self.adj_inicio = []
+        self.adj_fim = []
         self.color = Black
 
         #print (args)
@@ -69,7 +72,24 @@ class Bezier:
     def add_adjacente(self, curva):
         self.adjacentes.append(curva)
 
+    def add_adj_inicio(self, curva):
+        self.adj_inicio.append(curva)
+    def add_adj_fim(self, curva):
+        self.adj_fim.append(curva)
+
     def random_curve(self):
+        self.color = Black
+        curva = random.choice(self.adjacentes)
+        curva.color = YellowGreen
+        return curva
+    def random_curve_directed(self, personagem:InstanciaBZ):
+        self.color = Black
+        curva = random.choice(self.adjacentes)
+        curva.color = YellowGreen
+        return curva
+
+    def random_curve_character(self, character):
+
         self.color = Black
         curva = random.choice(self.adjacentes)
         curva.color = YellowGreen

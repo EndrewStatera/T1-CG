@@ -22,6 +22,7 @@ class InstanciaBZ:
         self.modelo = None
         self.next_curve = None
         self.curve = None
+        self.direction = 1
     
     """ Imprime os valores de cada eixo do ponto """
     # Faz a impressao usando sobrecarga de funcao
@@ -64,28 +65,13 @@ class InstanciaBZ:
     def get_next_curve(self):
         self.next_curve = self.curve.random_curve()
 
-    def associaCurva(self ,curva):
+    def associaCurva(self, curva):
         self.curve = curva
         pass
 
-    @classmethod
-    def calculaDeslocamento(self, deslocamento):
-        t = deslocamento
-        um_menos_t = 1-t
-        '''
-        lista_pontos_curva = self.curva.lst_pt
-        if len(self.curva.lst_pt) == 3:
-            p0 = lista_pontos_curva[0]
-            p1 = lista_pontos_curva[1]
-            p2 = lista_pontos_curva[2]
-            
-            c1x = (um_menos_t**2 * p0.x) + (2*um_menos_t * t * p1.x) + (t**2 * p2.x)
-            c1y = (um_menos_t**2 * p0.y) + (2*um_menos_t * t * p1.y) + (t**2 * p2.y)
-            c1 = Ponto()
-            c1.set(c1x, c1y)
-            self.ponto = c1
-            return c1
-        '''
-        return self.curva.Calcula(deslocamento)
+    def change_direction(self):
+        self.direction *= -1
 
+    def posicao_final_curva(self):
+        return self.curve.Calcula(1*self.direction)
     
