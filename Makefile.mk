@@ -17,5 +17,8 @@ CC = g++
 $(PROG): $(OBJETOS)
 	$(CC) $(CPPFLAGS) $(OBJETOS) -o $@ $(LDFLAGS)
 
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	$(CC) $(CPPFLAGS) -c $< -o $@
+
 clean:
-	-@ del $(OBJETOS) $(PROG)
+	-del /Q $(OBJ_DIR)\*.o $(PROG)
