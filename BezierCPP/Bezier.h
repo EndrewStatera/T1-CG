@@ -26,6 +26,7 @@ using namespace std;
 #endif
 
 #include "Ponto.h"
+#include "ListaDeCoresRGB.h"
 
 class Bezier
 {

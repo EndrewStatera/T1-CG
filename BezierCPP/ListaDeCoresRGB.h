@@ -23,7 +23,7 @@ using namespace std;
 #endif
 
 #ifdef __linux__
-#include <GL/glut.h>
+#include <glut.h>
 #endif
 
 enum {

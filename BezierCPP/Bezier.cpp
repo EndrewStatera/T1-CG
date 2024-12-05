@@ -5,13 +5,14 @@
 
 #include "Bezier.h"
 
+
 // **********************************************************************
 Bezier::Bezier()
 {
     for (int i=0;i<3;i++)
         Coords[i] = Ponto(0,0,0);
     ComprimentoTotalDaCurva = 0;
-    cor = rand() % 100;
+    cor = GreenCopper; 
     //cout << "Cor: " << cor << endl;
 }
 // **********************************************************************
@@ -45,7 +46,7 @@ Bezier::Bezier(Ponto P0, Ponto P1, Ponto P2)
     Coords[1] = P1;
     Coords[2] = P2;
     calculaComprimentoDaCurva();
-    cor = rand() % 100;
+    cor = GreenCopper;
 }
 // **********************************************************************
 Bezier::Bezier(Ponto V[])
@@ -53,7 +54,7 @@ Bezier::Bezier(Ponto V[])
     for (int i=0;i<3;i++)
         Coords[i] = V[i];
     calculaComprimentoDaCurva();
-    cor = rand() % 100;
+    cor = GreenCopper;
 }
 // **********************************************************************
 //

@@ -11,6 +11,8 @@
 
 #include <iostream>
 #include <cmath>
+#include <random>
+#include <chrono>
 using namespace std;
 
 class Ponto {
@@ -31,6 +33,7 @@ public:
     void rotacionaX(float angulo);
     void rotacionaY(float angulo);
     void rotacionaZ(float angulo);
+    int numeroRand(int dist);
 } ;
 
 
